@@ -8,14 +8,9 @@
 /*
     TO-DO:
         - Paralelizar geração aleátoria de números
-        - Colocar argumentos na chamada da main
-        - Criar sistema de tempo
         - Criar comparativo de com thread vs sem thread
+        - Organizar código
 */
-
-// temp vars
-int num_threads = 5;
-int items = 200;
 
 void *search(void*);
 void generate_arr(int*, int, int);
@@ -29,14 +24,25 @@ typedef struct search_args {
     int *result;
 } search_args;
 
-int main(void) {
+int main(int argc, char *argv[]) {
     srand(time(NULL));
+
+    if (argc < 4) {
+        printf("Argumentos insuficientes!\n");
+        exit(-1);
+    }
+
+    int num_threads = atoi(argv[1]);
+    int items = atoi(argv[2]);
+    int expected = atoi(argv[3]);
 
     pthread_t threads[num_threads];
     int arr[items];
     generate_arr(arr, items, 101);
 
     int found = 0;
+
+    clock_t start = clock();
 
     for (int id = 0; id < num_threads; id++) {
         int items_per_thread = items/num_threads;
@@ -48,7 +54,7 @@ int main(void) {
         search_args *args = (search_args*) malloc(sizeof(search_args));
         
         args -> arr = arr;
-        args -> expected = 2;
+        args -> expected = expected;
         args -> thread_id = id;
         args -> start = start;
         args -> end = end;
@@ -66,6 +72,9 @@ int main(void) {
     }
 
     printf("Valor encontrado? %d\n", found);
+
+    clock_t end = clock();
+    printf("%lf (ms)\n", (double) (end-start)/CLOCKS_PER_SEC);
 
     return 0;
 }
