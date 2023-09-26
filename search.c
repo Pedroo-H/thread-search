@@ -1,22 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <time.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
 /*
     TO-DO:
-        - Criar geração aleátoria de números
+        - Paralelizar geração aleátoria de números
         - Colocar argumentos na chamada da main
         - Criar sistema de tempo
-        -
+        - Criar comparativo de com thread vs sem thread
 */
 
 // temp vars
 int num_threads = 5;
-int items = 5;
+int items = 200;
 
 void *search(void*);
+void generate_arr(int*, int, int);
 
 typedef struct search_args {
     int *arr;
@@ -28,8 +30,12 @@ typedef struct search_args {
 } search_args;
 
 int main(void) {
+    srand(time(NULL));
+
     pthread_t threads[num_threads];
-    int arr[] = {4, 2, 1, 5, 6};
+    int arr[items];
+    generate_arr(arr, items, 101);
+
     int found = 0;
 
     for (int id = 0; id < num_threads; id++) {
@@ -86,4 +92,10 @@ void* search(void* args) {
     pthread_exit(NULL);
 
     return NULL;
+}
+
+void generate_arr(int* arr, int size, int cap) {
+    for (int i = 0; i < size; i++) {
+        arr[i] = rand() % cap;
+    }
 }
