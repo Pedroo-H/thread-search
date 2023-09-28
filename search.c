@@ -10,7 +10,6 @@
         - Organizar código - separar em arquivos
         - Criar flags (?)
         - Posso colocar o ponteiro de resultado de forma diferente?
-        - Random seed não está funcionando
 */
 
 typedef struct search_args {
@@ -192,6 +191,7 @@ void *thread_generate(void* args) {
     int end = arg -> end;
     int cap = arg -> cap;
 
+    srand(time(NULL) + arg -> start);
     for (int i = start; i < end; i++) {
         arr[i] = rand() % cap;
     }
